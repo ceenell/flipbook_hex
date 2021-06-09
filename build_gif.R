@@ -24,3 +24,4 @@ flipbook_to_gif <- function(flipbook_filepath,
 
 # create gif of example from R for Data Science book
 flipbook_to_gif(here::here("build_hex.Rmd"))
+
