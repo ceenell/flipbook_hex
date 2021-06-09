@@ -1,0 +1,257 @@
+---
+title: "making a hex map"
+author: ""
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, hygge, ninjutsu]
+    nature:
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+---
+  
+```{r, include = F}
+library(flipbookr)
+# This is the recommended set up for flipbooks
+knitr::opts_chunk$set(fig.width = 10, message = FALSE, warning = FALSE, comment = "", cache = F)
+```
+```{css, eval = TRUE, echo = FALSE}
+.remark-code{line-height: 1.2; font-size: 60%}
+@media print {
+  .has-continuation {
+    display: block;
+  }
+}
+
+```  
+---
+`r chunk_reveal("usa_pkg", break_type = "user", title = "")` 
+
+```{r usa_pkg, include = FALSE, cache = TRUE}
+library(tidyverse) #BREAK
+library(sf) #BREAK
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>% 
+  st_buffer(0)  #BREAK
+
+usa_sf %>%  #BREAK
+  ggplot() +  #BREAK
+  geom_sf(fill = NA)  #BREAK
+```  
+
+---
+`r chunk_reveal("usa_proj", break_type = "non_seq", title = "")` 
+
+```{r usa_proj, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+ #BREAK2
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs"  #BREAK2
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% #BREAK2
+  st_buffer(0) 
+  #BREAK4
+## read in temperature observations  #BREAK4
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>% #BREAK4
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% #BREAK4
+  st_transform(proj) #BREAK4
+
+usa_sf %>%  
+  ggplot() +  
+  geom_sf(fill = NA) +
+  geom_sf(data = sites_sf, #BREAK5
+          color = "darkorchid", #BREAK6
+          alpha = 0.1, #BREAK7
+          size = 0.1 #BREAK7
+          ) + #BREAK5
+  theme_void() #BREAK3
+```  
+---
+`r chunk_reveal("usa_int", break_type = "non_seq", title = "")` 
+
+```{r usa_int, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs" 
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% 
+  st_buffer(0) 
+  
+## read in temperature observations  
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
+  st_transform(proj) 
+
+usa_sf %>%  
+  st_make_grid(cellsize = 800) %>% #BREAK2
+  st_as_sf() %>%  #BREAK2
+  st_intersection(usa_sf) %>% #BREAK3
+  ggplot() +  
+  geom_sf(fill = NA) +
+  geom_sf(data = sites_sf, 
+          color = "darkorchid",
+          alpha = 0.1, 
+          size = 0.1 
+          ) + 
+  theme_void() 
+```  
+---
+`r chunk_reveal("usa_grid", break_type = "rotate", title = "")` 
+
+```{r usa_grid, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs" 
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% 
+  st_buffer(0) 
+  
+## read in temperature observations  
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
+  st_transform(proj) 
+
+usa_sf %>%  
+  st_make_grid(cellsize = 500) %>% #ROTATE
+  st_make_grid(cellsize = 300) %>% #ROTATE
+  st_make_grid(cellsize = 300, square = FALSE) %>% #ROTATE
+  st_make_grid(cellsize = 100, square = FALSE) %>% #ROTATE
+  st_as_sf() %>%  
+  st_intersection(usa_sf) %>%
+  ggplot() +  
+  geom_sf(fill = NA) +
+  geom_sf(data = sites_sf, 
+          color = "darkorchid",
+          alpha = 0.1, 
+          size = 0.1 
+          ) + 
+  theme_void() 
+```  
+---
+`r chunk_reveal("add_data", break_type = "non_seq", title = "")` 
+
+```{r add_data, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs" 
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% 
+  st_buffer(0) 
+  
+## read in temperature observations  
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
+  st_transform(proj) 
+
+usa_sf %>%  
+  st_make_grid(cellsize = 100, square = FALSE) %>% 
+  st_as_sf() %>%  
+  st_intersection(usa_sf) %>%
+  rownames_to_column('hex') %>% #BREAK3
+  st_join(sites_sf) %>% #BREAK2
+  group_by(hex) %>% #BREAK3
+  summarize(obs_hex = sum(n_obs)) %>%  #BREAK3
+  ggplot() +  
+  geom_sf() +
+  geom_sf(data = sites_sf, 
+          color = "darkorchid",
+          alpha = 0.1, 
+          size = 0.1 
+          ) + 
+  theme_void() 
+```  
+---
+`r chunk_reveal("add_fill", break_type = "rotate", title = "")` 
+
+```{r add_fill, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs" 
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% 
+  st_buffer(0) 
+  
+## read in temperature observations  
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
+  st_transform(proj) 
+
+usa_sf %>%  
+  st_make_grid(cellsize = 100, square = FALSE) %>% 
+    st_as_sf() %>%  
+  st_intersection(usa_sf) %>%
+  rownames_to_column('hex') %>% 
+  st_join(sites_sf) %>% 
+  group_by(hex) %>% 
+  summarize(obs_hex = sum(n_obs)) %>% 
+  ggplot() +  
+  geom_sf(fill = NA) + #ROTATE
+  geom_sf(fill = "pink") + #ROTATE
+  geom_sf(aes(fill = obs_hex)) + #ROTATE
+  geom_sf(data = sites_sf, 
+          color = "darkorchid",
+          alpha = 0.1, 
+          size = 0.1 
+          ) + 
+  theme_void() 
+```  
+---
+`r chunk_reveal("style_fill", break_type = "rotate", title = "")` 
+
+```{r style_fill, include = FALSE, cache = TRUE}
+library(tidyverse) 
+library(sf) 
+
+proj <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs" 
+
+# conus map
+usa_sf <- maps::map('usa', fill = TRUE, plot = FALSE) %>% 
+  st_as_sf() %>%
+  st_transform(proj) %>% 
+  st_buffer(0) 
+  
+## read in temperature observations  
+sites_sf <- read.csv("data/temperature_obs_conus.csv") %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326) %>% 
+  st_transform(proj) 
+
+usa_sf %>%  
+  st_make_grid(cellsize = 100, square = FALSE) %>% 
+  st_as_sf() %>%  
+  st_intersection(usa_sf) %>%
+  rownames_to_column('hex') %>% 
+  st_join(sites_sf) %>% 
+  group_by(hex) %>% 
+  summarize(obs_hex = sum(n_obs)) %>% 
+  ggplot() +  
+  geom_sf(aes(fill = obs_hex)) + 
+  scale_fill_viridis(option = "inferno") + #ROTATE
+  scale_fill_viridis(option = "mako") + #ROTATE
+  scale_fill_viridis(option = "rocket") + #ROTATE
+  scale_fill_viridis(option = "plasma") + #ROTATE
+  scale_fill_viridis(option = "plasma", na.value = NA) + #ROTATE
+  theme_void() 
+```  
+---
