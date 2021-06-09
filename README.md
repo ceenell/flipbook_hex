@@ -1,7 +1,7 @@
 # flipbook_hex
 an animated flipbook of how to make a hex map with rstats
 
-The flipbook contents are defined in `build_hex.Rmd` using `data/temperature_obs_conus.csv`. The gif output is created using a combination of `flipbookr` + `xaringan` + `pagedown` + `magick`. To create the gif output, run the `flipbook_to_gif` function in `build_gif.R`. This will take ~30 minutes to run because of the large amount of data in the flipbook. 
+The flipbook contents are defined in `build_hex.Rmd` using `data/temperature_obs_conus.csv`. The gif output is created using a combination of `flipbookr` + `xaringan` + `pagedown` + `magick`. To create the gif output, run the `flipbook_to_gif` function in `build_gif.R`. This will take ~30 minutes to produce the output. 
 
 Because of the way the code build is written, it is easiest to troubleshoot the flipbook in pieces rather than re-knitting the `.Rmd`. This is partially due to the way the code progression is written. Still learning the ways! 
 
