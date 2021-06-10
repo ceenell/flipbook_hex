@@ -3,7 +3,8 @@ an animated flipbook of how to make a hex map with rstats
 
 The flipbook contents are defined in `build_hex.Rmd` using `data/temperature_obs_conus.csv`. The gif output is created using a combination of `flipbookr` + `xaringan` + `pagedown` + `magick`. Essentially, `xaringan` slides are made with an `.Rmd` using operations from `flipbookr` to define how the code is re-built, including paired code and graphics, highlighting, and sequencing.
 
-**Not yet working:** To produce a gif, can use `pagedown` to create frames from slides and animate with `magick`. To create the gif output, run the `flipbook_to_gif` function in `build_gif.R`. This process is based off of this github repo by [brshallo](https://github.com/brshallo/flipbookr-gifs-examples). To run locally use moon reader, may take ~10 min to knit. 
+To run locally use moon reader, may take ~10 min to knit. 
+**Not yet working:** To produce a gif, can use `pagedown` to create frames from slides and animate with `magick`. To create the gif output, run the `flipbook_to_gif` function in `build_gif.R`. This process is based off of this github repo by [brshallo](https://github.com/brshallo/flipbookr-gifs-examples).
 
 Because of the way the code build is written, it is easiest to troubleshoot the flipbook in pieces rather than re-knitting the `.Rmd`. This is partially due to the way the code progression is written. Still learning the ways! 
 
